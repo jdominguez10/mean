@@ -135,6 +135,41 @@ function getUser(req,res){
 
 }
 
+/**
+ * Paginación, obtiene el número de página
+ * @param {*} req 
+ * @param {*} resp 
+ */
+function getUsers(req, res){
+    var identity_user_id = req.user.sub;
+    
+    var page = 1;
+    if(req.params.page){
+            page = req.params.page;
+    }
+
+    var itemsPerPage = 5;
+
+  
+
+    User.find().sort('_id').paginate(page, itemsPerPage, (err, users, total) => {
+        if (err) return res.status(500).send({message:'Error en la petición'});
+        if (!users) return res.status(404).send({message:'No hay usuarios disponibles'});
+
+
+        var pages =  Math.ceil(total/itemsPerPage);
+
+          
+         return res.status(200).send({
+            users,
+            total,
+            pages
+
+        });
+
+    }); 
+
+}
 
 
 module.exports = {
@@ -142,6 +177,7 @@ module.exports = {
     pruebas,
     saveUser,
     loginUser,
-    getUser
+    getUser,
+    getUsers
 }
 
