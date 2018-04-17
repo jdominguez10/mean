@@ -1,5 +1,8 @@
 'use strict'
 var bcrypt = require('bcrypt-nodejs');
+
+var mongoosepaginate = require('mongoose-pagination');
+
 var User = require('../models/user');
 //agregar servicios
 var jwt = require('../services/jwt');
@@ -17,7 +20,11 @@ function pruebas(req, res){
             message: 'Acción de pruebas en el servidor de NodeJS'
         });
 }
-
+/**
+ * Guardar Usuario
+ * @param {*} req 
+ * @param {*} res 
+ */
 function saveUser(req, res){
    
         var params = req.body;
@@ -71,6 +78,11 @@ function saveUser(req, res){
 
         }
 }
+/**
+ * Logear Usuario
+ * @param {*} req 
+ * @param {*} res 
+ */
 function loginUser(req,res){
     var params = req.body;
 
@@ -108,12 +120,28 @@ function loginUser(req,res){
 
 
 }
+/**
+ * Conseguir datos de usuario
+ */
+function getUser(req,res){
+    var UserId = req.params.id;
+
+    User.findById(UserId, (err, user) => {
+        if (err) return res.status(500).send({message:'Error en la petición'});
+        if (!user) return res.status(404).send({message:'El usuario no existe'});
+
+        return res.status(200).send({user});
+    });
+
+}
+
 
 
 module.exports = {
 	home, 
     pruebas,
     saveUser,
-    loginUser
+    loginUser,
+    getUser
 }
 
